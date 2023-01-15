@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <nav class="row justify-content-left end-0 navbar navbar-expand-md navbar-light fixed-top bg-light">
+        <div class="col-1">
+            <a class="nav-link" href="/projects">PROJECTS</a>
+        </div>
+        <div class="col-10">
+
+        </div>
+        <div class="col-1">
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                <input type="submit" class="btn btn-danger" value="EXIT">
+            </form>
+        </div>
+    </nav>
+</head>
+<body class="justify-content-center">
+<div>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+</div>
+<div class="container">
+    <div class="row justify-content-around">
+        <div class="col-4">
+            <div class="card">
+                <img th:if="${user.imageId}" th:src="@{/images/{id}(id=${user.imageId})}" class="card-img-top"/>
+                <img th:if="not ${user.imageId}"  th:src="@{${'/api/images/user/' + user.ID}}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${user.username}"></h5>
+                    <p class="card-text" th:text="${user.description}"></p>
+                    <form th:if="${admin}" th:action="@{/update}" method="post">
+                        <input th:name="description" placeholder="edit description">
+                        <input type="file" th:name="file"/>
+                        <input type="hidden" name="_csrf" value="@{_csrf.token}">
+                        <input type="submit" class="btn btn-danger" value="change"/>
+                    </form>
+                    <form th:action="@{/messages}" method="post">
+                        <input type="hidden" name="name" th:value="${user.username}">
+                        <input type="submit" class="btn btn-danger" value="CHAT">
+                    </form>
+                </div>
+            </div>
+            <br/>
+            <br/>
+        </div>
+        <div class="col-4">
+            <ul class="list-group list-group-flush">
+                <a th:each="proj : ${projects}" class="list-group-item" th:text="${proj.name}"
+                   th:href="@{/projects/{id}(id=${proj.ID})}"></a>
+            </ul>
+        </div>
+    </div>
+    <br/>
+    <div class="row justify-content-around">
+        <div class="col-4">
+            <form th:action="@{/create}" th:object="${project}" method="post" style="max-width: 500px;">
+                <div class="row mb-2">
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="Project Name">
+                </div>
+                <div class="row mb-2">
+                    <input type="text" class="form-control" th:field="*{description}" placeholder="Project Description">
+                </div>
+                <div class="row mb-2">
+                    <select name="area" class="form-control">
+                        <option th:each="area : ${T(org.example.Enums.Area).values()}"
+                                th:value="${area}" th:text="${area}"></option>
+                    </select>
+                </div>
+                <div class="row mb-2">
+                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                    <input type="submit" class="btn btn-danger btn-xs btn-block" value="CREATE"/>
+                </div>
+            </form>
+        </div>
+        <div class="col-4">
+            тут будет картинка типо сделай свой проект
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+</body>
+</html>
